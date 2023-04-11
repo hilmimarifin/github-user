@@ -12,5 +12,6 @@
     <string name="tab_text_2">Followers</string>
     <string name="favorite">favorite</string>
     <string name="setting">setting</string>
-    <string name="addToFav">Add to Favorite</string>
+    <string name="addToFav">Tambah ke favroti</string>
+    <string name="dark_mode">Dark Mode</string>
 </resources>

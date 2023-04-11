@@ -8,10 +8,21 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.githubuser.R
 import com.example.githubuser.databinding.ActivityMainBinding
+import com.example.githubuser.helper.SettingPreferences
+import com.example.githubuser.viewmodel.SettingViewmodel
+import com.example.githubuser.viewmodel.SettingViewmodelFactory
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +35,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val pref = SettingPreferences.getInstance(dataStore)
+        val settingViewmodel = ViewModelProvider(this, SettingViewmodelFactory(pref)).get(
+            SettingViewmodel::class.java)
+        settingViewmodel.getThemeSettings().observe(this) { isDarkModeActive: Boolean ->
+            if (isDarkModeActive) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -57,12 +79,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
+        val navController = navHostFragment.navController
         when (item.itemId) {
             R.id.favorite -> {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, FavoriteFragment())
-                    .addToBackStack(null)
-                    .commit()
+                navController.navigate(R.id.action_homeFragment_to_favoriteFragment)
                 return true
             }
             R.id.setting -> {

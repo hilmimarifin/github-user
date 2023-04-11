@@ -28,10 +28,9 @@ class DetailViewmodel(application: Application): ViewModel() {
         mFavoriteUserRepository.delete(favoriteUser)
     }
 
-    fun getAllFavorite(){
-        mFavoriteUserRepository.getAllFavoriteUsers()
-    }
+    fun getAllFavoriteUser(): LiveData<List<FavoriteUser>> = mFavoriteUserRepository.getAllFavoriteUsers()
 
+    fun getFavoriteByUsername(username: String): LiveData<FavoriteUser> = mFavoriteUserRepository.getFavoriteUserByUsername(username)
     fun getDetailUser(username: String?){
         _isLoadingUsers.value = true
         val client = ApiConfig.getApiService().getDetailUser(username)

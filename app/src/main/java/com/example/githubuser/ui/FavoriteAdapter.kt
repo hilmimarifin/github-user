@@ -15,7 +15,7 @@ class FavoriteAdapter(private val context: Context, private val listUser: ArrayL
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int) =
         ViewHolder(LayoutInflater.from(viewGroup.context).inflate(R.layout.item_user, viewGroup, false))
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val (avatar, id, username) = listUser[position]
+        val (id, username, avatar) = listUser[position]
         viewHolder.tvItem.text = username
         Glide.with(context)
             .load(avatar)

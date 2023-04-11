@@ -43,12 +43,13 @@ class DetailActivity : AppCompatActivity() {
             tab.text = resources.getString(TAB_TITLES[position])
         }.attach()
         supportActionBar?.elevation = 0f
-        var favorite: FavoriteUser? = null
+        var favorite = FavoriteUser()
         detailViewmodel.detailUser.observe(this) { detailUser ->
             if (detailUser != null) {
                 setUserData(detailUser)
                 favorite?.avatar = detailUser.avatarUrl
                 favorite?.username = detailUser.login
+                favorite?.id = detailUser.id
             }
         }
         detailViewmodel.isLoadingUsers.observe(this) { loading ->
@@ -57,12 +58,26 @@ class DetailActivity : AppCompatActivity() {
             )
         }
 
-        binding?.addToFav?.setOnClickListener{
-            favorite?.let { it1 -> detailViewmodel.insert(it1) }
-            Toast.makeText(this, "Added to favorite", Toast.LENGTH_SHORT).show()
+        if (username != null) {
+                detailViewmodel.getFavoriteByUsername(username).observe(this){ favoriteOne -> if(favoriteOne != null)
+                {
+                    binding?.addToFav?.text = "Remove from favorite"
+                    binding?.addToFav?.setOnClickListener{
+                        detailViewmodel.delete(favorite)
+                        Toast.makeText(this, "Removed from favorite", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    binding?.addToFav?.text = "Add to Favorite"
+                    binding?.addToFav?.setOnClickListener{
+                        detailViewmodel.insert(favorite)
+                        Toast.makeText(this, "Added from favorite", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
 
     }
+
 
     private fun setUserData(data: UserDetailResponse) {
         binding.displayName.text = data.name
